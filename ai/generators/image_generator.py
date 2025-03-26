@@ -1,7 +1,6 @@
 from base64 import b64decode
 from pathlib import Path
 import requests
-from datetime import datetime
 import sys
 
 
@@ -24,7 +23,7 @@ def generate_image(
         prompt (str): Text guiding image generation
         api_key (str): Your API key for authentication
         name (str): Full Name of the scientist
-        output_dir (str): Directory to save the image. Defaults to script directory/output/
+        output_dir (str): Directory to save the image. Defaults to script directory/outputs/
         negative_prompt (str): What you don't want to see
         language (str): ISO 639-1 language code
         image_format (str): Output format (JPEG or PNG)
@@ -35,10 +34,10 @@ def generate_image(
     Returns:
         dict: Complete response from API including metadata
     """
-    # Set default output directory relative to script location
+    # Set default outputs directory relative to script location
     if output_dir is None:
         script_dir = Path(sys.argv[0]).parent
-        output_dir = script_dir / "output"
+        output_dir = script_dir / "outputs"
     else:
         output_dir = Path(output_dir)
 

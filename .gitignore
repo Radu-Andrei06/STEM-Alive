@@ -1,0 +1,8 @@
+.env
+__pycache__/
+*.pyc
+ai/outputs/*
+.idea/
+
+ai/outputs/*    # Ignore ALL files in the outputs/ directory
+!.gitkeep       # EXCEPT the .gitkeep file (so Git keeps the folder)
