@@ -9,8 +9,8 @@ Core functions:
 
 | Function          | Description |
 |:-----------------:|:------------|
-| get_ai_response() | Processes user prompts and returns raw AI-generated text. Accepts model selection (e.g., "gemini-1.5-pro"), response constraints, and persona customization for tailored outputs. |
-| ai_to_json()      | Delivers identical functionality but structures responses as JSON objects containing the AI's answer, original prompt, model used, and configuration parameters. |
+| get_ai_response(-) | Processes user prompts and returns raw AI-generated text. Accepts model selection (e.g., "gemini-1.5-pro"), response constraints, and persona customization for tailored outputs. |
+| ai_to_json(-)      | Delivers identical functionality but structures responses as JSON objects containing the AI's answer, original prompt, model used, and configuration parameters. |
 
 Both functions feature automatic API key management through environment variables, comprehensive error handling that returns structured error messages, and support for multiple Gemini model versions. The system maintains consistent response formatting while allowing customization of output style and length through configuration parameters.
 
@@ -18,13 +18,6 @@ Both functions feature automatic API key management through environment variable
 - [Usage](#usage)
 - [Functions](#functions)
 - [Requirements](../README.md#shipit-requirements)
-
-### Installation
-Install the required packages:
-`pip install -r requirements.txt`
-
-Insert Gemini API key into the .env file:
-`GEMINI_API_KEY=api_key_here`
 
 ### Usage
 

@@ -3,7 +3,6 @@ from pathlib import Path
 import requests
 import sys
 
-
 def generate_image(
         prompt: str,
         api_key: str,

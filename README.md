@@ -14,16 +14,24 @@
 | [Andrei Radu](mailto:r1037303@student.thomasmore.be)         | 1 ACS 02 | [Radu-Andrei06](https://github.com/Radu-Andrei06)       | r1037303 |
 | [Denys Herasymchuk](mailto:r1018334@student.thomasmore.be)   | 1 ACS 02 | [DenysHerasymchuk](https://github.com/DenysHerasymchuk) | r1018334 |
 
+### Installation
+Install the required packages:
+`pip install -r requirements.txt`
+
+Insert Gemini API key into the .env file:
+`GEMINI_API_KEY=api_key_here`
+
 ### 🍔 Project Structure:
 ``` yaml
 STEM-Alive/
-│── 📜 .env                     # Environment variables (API keys, configs)
-│── 📜 .gitignore               # Specifies untracked files
-│── 📜 README.md                # Project documentation (setup/usage)
+│── 📜 .env                     # Environment variables
+│── 📜 .gitignore               # Git ignore rules
+│── 📜 README.md                # Project documentation
 │── 📜 requirements.txt         # Python dependencies
 │
 ├───🧪 tests/                   # Test suite
 │   │   📜 conftest.py          # Pytest fixtures
+│   │   📜 __init__.py          # Package initialization
 │   │
 │   └───🔬 unit/                # Unit tests
 │       ├───🖼️ generators/
@@ -34,17 +42,20 @@ STEM-Alive/
 │               📜 test_core.py
 │
 └───🧠 ai/                      # Core AI functionality
+    │── 📜 README.md            # Module documentation
     │── 📜 __init__.py          # Package initialization
     │
     ├───🎨 generators/          # Content generation
-    │       📜 image_generator.py  # DALL·E/Stable Diffusion integration
-    │       📜 text_generator.py   # Gemini/LLM text generation
+    │       📜 image_generator.py  # DALL·E/Stable Diffusion
+    │       📜 text_generator.py   # Gemini/LLM text
+    │       📜 __init__.py         # Subpackage init
     │
     ├───📂 outputs/             # Generated artifacts
-    │       📄 .gitkeep         # Empty file to preserve directory
+    │       📄 .gitkeep         # Preserve directory structure
     │
     └───🔊 tts/                 # Text-to-speech
-            📜 text_to_speech.py  # ElevenLabs/Google TTS integration
+            📜 text_to_speech.py  # ElevenLabs/Google TTS
+            📜 __init__.py        # Subpackage init
 ```
 
 ### :shipit: Requirements

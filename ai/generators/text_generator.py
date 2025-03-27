@@ -92,13 +92,13 @@ def ai_to_json(
         }
         return json.dumps(error_dict, ensure_ascii=False)
 
-## Example usage ###
-
+# Example usage ###
+#
 # if __name__ == "__main__":
 #
 #     # Get response
 #     json = ai_to_json(
-#         prompt="",
+#         prompt="How did you die?",
 #         model="gemini-1.5-pro",
 #         config="Use simple analogies",
 #         name="Nikola Tesla"
