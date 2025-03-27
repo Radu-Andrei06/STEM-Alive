@@ -14,7 +14,7 @@ Core functions:
 
 Both functions feature automatic API key management through environment variables, comprehensive error handling that returns structured error messages, and support for multiple Gemini model versions. The system maintains consistent response formatting while allowing customization of output style and length through configuration parameters.
 
-- [Installation](#installation)
+- [Installation](../README.md##installation)
 - [Usage](#usage)
 - [Functions](#functions)
 - [Requirements](../README.md#shipit-requirements)
