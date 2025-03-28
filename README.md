@@ -10,7 +10,7 @@
 | Name                                                         | Class    | GitHub Username                                         |R-number  |
 |:-------------------------------------------------------------|:--------:|--------------------------------------------------------:|:--------:|
 | [Tofail Tousif](mailto:r1013513@student.thomasmore.be)       | ???      | []() | r1013513 |
-| [Kārlis Kalnakārklis](mailto:r1032928@student.thomasmore.be) | 1 ACS 02 | []() | r1032928 |
+| [Kārlis Kalnakārklis](mailto:r1032928@student.thomasmore.be) | 1 ACS 02 | [karliskalnakarklis](https://github.com/karliskalnakarklis) | r1032928 |
 | [Andrei Radu](mailto:r1037303@student.thomasmore.be)         | 1 ACS 02 | [Radu-Andrei06](https://github.com/Radu-Andrei06)       | r1037303 |
 | [Denys Herasymchuk](mailto:r1018334@student.thomasmore.be)   | 1 ACS 02 | [DenysHerasymchuk](https://github.com/DenysHerasymchuk) | r1018334 |
 
