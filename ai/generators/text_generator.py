@@ -1,33 +1,132 @@
 import os
-import json
+from datetime import datetime
 from dotenv import load_dotenv
 from google import genai
+from collections import defaultdict
+from functools import wraps
 
-# Load environment variables from .env file
+# Load environment variables
 load_dotenv()
-
-# Get API key from environment variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Initialize the Gemini AI client
 client = genai.Client(api_key=GEMINI_API_KEY)
 
+# In-memory conversation history storage
+# Structure: {user_id: {character: [messages]}}
+conversation_history = defaultdict(lambda: defaultdict(list))
+
+def ai_response_decorator(func):
+
+    """
+
+    Decorator that transforms the raw AI response into structured JSON output
+    with metadata and conversation history management.
+
+    """
+
+    @wraps(func)
+    def wrapper(
+            prompt: str,
+            model: str = "gemini-1.5-flash",
+            config: str = "Maximum of 100 chars.",
+            character: str = "Albert Einstein",
+            user_id: int = 0,
+            use_history: bool = True
+    ) -> str:
+
+        start_time = datetime.now()
+
+        try:
+            # Call the original function
+            ai_response = func(
+                prompt=prompt,
+                model=model,
+                config=config,
+                character=character,
+                user_id=user_id,
+                use_history=use_history
+            )
+
+            response_time = (datetime.now() - start_time).total_seconds() * 1000
+
+            # Build the structured response
+            response_dict = {
+                "question": prompt,
+                "response": {
+                    "character": character,
+                    "answer": ai_response
+                },
+                "config": {
+                    "model": model,
+                    "max_length": int(config.split()[2]) if "max" in config.lower() else None,
+                    "context_used": use_history
+                },
+                "metadata": {
+                    "timestamp": datetime.now().isoformat(),
+                    "response_time_ms": round(response_time),
+                    "user_id": user_id
+                }
+            }
+
+            # Store in conversation history
+            conversation_history[user_id][character].append(response_dict)
+
+            return json.dumps(response_dict, ensure_ascii=False, indent=2)
+
+        except Exception as e:
+            error_dict = {
+                "question": prompt,
+                "response": {
+                    "character": character,
+                    "answer": f"Error: {str(e)}"
+                },
+                "config": {
+                    "model": model,
+                    "max_length": None,
+                    "context_used": False
+                },
+                "metadata": {
+                    "timestamp": datetime.now().isoformat(),
+                    "response_time_ms": 0,
+                    "user_id": user_id
+                }
+            }
+            return json.dumps(error_dict, ensure_ascii=False, indent=2)
+    return wrapper
+
+
+@ai_response_decorator
 def get_ai_response(
         prompt: str,
         model: str,
         config: str,
-        name: str
+        character: str,
+        user_id: int = 0,
+        use_history: bool = True
     ) -> str:
 
     """
 
-    Get AI response with customizable settings by querying the Gemini AI model.
-    Returns the raw text response from the AI.
+    Core function that handles the AI interaction
 
     """
 
     try:
-        full_prompt = f"{config} {prompt}\nYou are {name}"
+        # Build context from history
+        context_parts = []
+        if use_history:
+            for interaction in conversation_history[user_id][character][-3:]:
+                context_parts.append(f"Previous Q: {interaction['question']}")
+                context_parts.append(f"Previous A: {interaction['response']['answer']}")
+
+        # Construct full prompt
+        full_prompt = f"{config}\n"
+        if context_parts:
+            full_prompt += "\n".join(context_parts) + "\n\n"
+        full_prompt += f"{prompt}\nRespond as {character}"
+
+        # Get response
         response = client.models.generate_content(
             model=model,
             contents=full_prompt,
@@ -37,72 +136,176 @@ def get_ai_response(
         raise Exception(f"Failed to get AI response: {str(e)}")
 
 
-def ai_to_json(
-        prompt: str = "How was the weather when I died?",
-        model: str = "gemini-1.5-flash",
-        config: str = "Maximum of 100 chars.",
-        name: str = "Albert Einstein"
+import json
+
+
+def clear_conversation_history(
+        user_id: int,
+        character: str = None
     ) -> str:
 
     """
 
-    Get AI response formatted as a JSON string with metadata.
+    Clear history for a user/character and return JSON response
 
     Returns:
-        str: A JSON string containing:
-            - name: The persona name
-            - response: AI-generated content
-            - settings: Dictionary of input parameters
+        JSON string with status message
 
     """
 
     try:
-        # Get the AI response
-        ai_response = get_ai_response(
-            prompt=prompt,
-            model=model,
-            config=config,
-            name=name
-        )
-
-        # Create the dictionary structure
-        response_dict = {
-            "name": name,
-            "response": ai_response,
-            "settings": {
-                "prompt": prompt,
-                "model": model,
-                "config": config
-            }
-        }
-
-        # Convert to JSON string with ensure_ascii=False for proper Unicode handling
-        return json.dumps(response_dict, ensure_ascii=False)
-
+        if character:
+            if user_id in conversation_history and character in conversation_history[user_id]:
+                del conversation_history[user_id][character]
+                result = {"status": f"Cleared history for character {character}"}
+            else:
+                result = {"status": f"No history found for character {character}"}
+        else:
+            if user_id in conversation_history:
+                del conversation_history[user_id]
+                result = {"status": "Cleared all history for user"}
+            else:
+                result = {"status": "No history found for this user"}
     except Exception as e:
-        # Return error information as JSON string
-        error_dict = {
-            "name": name,
-            "response": f"Error: {str(e)}",
-            "settings": {
-                "prompt": prompt,
-                "model": model,
-                "config": config
-            }
-        }
-        return json.dumps(error_dict, ensure_ascii=False)
+        result = {"status": f"Error clearing history: {str(e)}"}
 
-# Example usage ###
-#
+    return json.dumps(result, indent=2)
+
+
+def get_conversation_history(
+        user_id: int,
+        character: str = None
+    ) -> str:
+
+    """
+
+    Get conversation history in JSON format
+
+    Returns:
+        JSON string with either:
+        - Full conversation history
+        - Filtered history for specific character
+        - Error message if not found
+
+    """
+
+    try:
+        if user_id not in conversation_history:
+            result = {"status": "No history found for this user"}
+        elif character:
+            history = conversation_history[user_id].get(character, [])
+            result = {
+                "user_id": user_id,
+                "character": character,
+                "history": history,
+                "count": len(history)
+            }
+        else:
+            full_history = dict(conversation_history[user_id])
+            result = {
+                "user_id": user_id,
+                "history": full_history,
+                "character_count": len(full_history),
+                "total_messages": sum(len(msgs) for msgs in full_history.values())
+            }
+    except Exception as e:
+        result = {"status": f"Error retrieving history: {str(e)}"}
+
+    return json.dumps(result, ensure_ascii=False, indent=2)
+
+
+def clear_history(user_id: int, character: str = None) -> str:
+
+    """
+
+    Clear conversation history with JSON response
+
+    Returns:
+        JSON string with operation status
+
+    """
+
+    result = {}
+    try:
+        if user_id not in conversation_history:
+            result = {"status": "No history found for this user"}
+        elif character:
+            if character in conversation_history[user_id]:
+                del conversation_history[user_id][character]
+                result = {
+                    "status": "success",
+                    "message": f"Cleared history for {character}",
+                    "user_id": user_id,
+                    "character": character
+                }
+            else:
+                result = {
+                    "status": "not_found",
+                    "message": f"No history found for {character}",
+                    "user_id": user_id,
+                    "character": character
+                }
+        else:
+            del conversation_history[user_id]
+            result = {
+                "status": "success",
+                "message": "Cleared all history for user",
+                "user_id": user_id
+            }
+    except Exception as e:
+        result = {
+            "status": f"error",
+            "message": str(e),
+            "user_id": user_id,
+            "character": character if character else None
+        }
+
+    return json.dumps(result, ensure_ascii=False, indent=2)
+
+# ## Example usage:
 # if __name__ == "__main__":
+#     # First interaction (user 1001)
+#     print("First question to Einstein:")
+#     print(get_ai_response(
+#         prompt="What's your view on quantum mechanics?",
+#         character="Albert Einstein",
+#         user_id=1001
+#     ))
 #
-#     # Get response
-#     json = ai_to_json(
-#         prompt="How did you die?",
-#         model="gemini-1.5-pro",
-#         config="Use simple analogies",
-#         name="Nikola Tesla"
-#     )
+#     # Follow-up with context (user 1001)
+#     print("\nFollow-up question:")
+#     print(get_ai_response(
+#         prompt="Can you explain that further?",
+#         character="Albert Einstein",
+#         user_id=1001
+#     ))
 #
-#     print("\nJSON Response:")
-#     print(json)
+#     # Different character conversation (user 1001)
+#     print("\nQuestion to Tesla:")
+#     print(get_ai_response(
+#         prompt="Tell me about your wireless electricity ideas",
+#         character="Nikola Tesla",
+#         user_id=1001
+#     ))
+#
+#     # Different user conversation (user 2002)
+#     print("\nDifferent user's question:")
+#     print(get_ai_response(
+#         prompt="Explain E=mc² simply",
+#         character="Albert Einstein",
+#         user_id=2002
+#     ))
+#
+#     # Inspect history examples:
+#     print("\nUser 1001's Einstein History:")
+#     print(json.dumps(get_conversation_history(1001, "Albert Einstein"), indent=2))
+#
+#     print("\nFull User 1001 History:")
+#     print(json.dumps(get_conversation_history(1001), indent=2))
+#
+#     # Clearing examples:
+#     print("\nClearing Einstein history for user 1001:")
+#     print(clear_history(1001, "Albert Einstein"))
+#
+#     print("\nClearing all history for user 1001:")
+#     print(clear_history(1001))

@@ -1,6 +1,5 @@
 # STEM-Alive
 ![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Gemini](https://img.shields.io/badge/Gemini-1.5+-orange.svg)
 
 ## Skills Integration (2024-2025)
@@ -62,5 +61,3 @@ STEM-Alive/
 - Python 3.8+
 - python-dotenv
 - google-generativeai
-
-:scroll: __License: MIT__
