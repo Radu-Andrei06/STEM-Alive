@@ -1,113 +1,133 @@
 # STEM-Alive
 ![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Gemini](https://img.shields.io/badge/Gemini-1.5+-orange.svg)
 
-## 1 . AI Content Generation _(text-generator.py)_
+## 1 ) AI Content Generation _(text_generator.py)_
 
-Core functions:
+Advanced conversation handler with memory and persona support.
 
-| Function          | Description |
-|:-----------------:|:------------|
-| get_ai_response(-) | Processes user prompts and returns raw AI-generated text. Accepts model selection (e.g., "gemini-1.5-pro"), response constraints, and persona customization for tailored outputs. |
-| ai_to_json(-)      | Delivers identical functionality but structures responses as JSON objects containing the AI's answer, original prompt, model used, and configuration parameters. |
+Maintains contextual dialogues with Gemini AI while tracking metadata and performance metrics.
 
-Both functions feature automatic API key management through environment variables, comprehensive error handling that returns structured error messages, and support for multiple Gemini model versions. The system maintains consistent response formatting while allowing customization of output style and length through configuration parameters.
+🍔 **Core functions:**
 
-- [Installation](../README.md##installation)
-- [Usage](#usage)
-- [Functions](#functions)
+|          Function           | Description |
+|:---------------------------:|:------------|
+|      `get_ai_response()`      | Decorated function that handles AI interactions with JSON formatting |
+| `get_conversation_history()`  | Retrieves conversation logs with message counts |
+|       `clear_history()`       | Manages conversation data lifecycle |
+
+- [Installation](../README.md#installation)
+- [Usage](#usage-examples)
+- [Functions](#-function-specifications)
 - [Requirements](../README.md#shipit-requirements)
 
-### Usage
-
-#### Getting a Raw AI Response:
-
-``` python
+### Usage examples
+#### 1. Basic Interaction
+```python
 response = get_ai_response(
-    prompt="Explain quantum physics simply",
-    model="gemini-1.5-pro",
-    config="Keep it under 200 characters",
-    name="Richard Feynman"
+    prompt="Explain quantum entanglement",
+    character="Richard Feynman",
+    user_id=1001,
+    config="Limit to 150 words"
 )
 ```
+#### 2. Contextual Follow-up
+```python
+# First question
+get_ai_response(
+    prompt="What's special about 1947?",
+    character="Albert Einstein",
+    user_id=1001
+)
 
-#### Getting a JSON Formatted Response:
-``` python
-json_response = ai_to_json(
-    prompt="How would you describe the internet?",
-    model="gemini-1.5-flash",
-    config="Use a metaphor",
-    name="Tim Berners-Lee"
+# Follow-up (automatically includes previous exchange)
+get_ai_response(
+    prompt="How did that influence your work?",
+    character="Albert Einstein", 
+    user_id=1001
 )
 ```
+#### 3. History Management
+```python
+# Get full conversation log
+history = get_conversation_history(user_id=1001)
+
+# Clear specific character history
+clear_history(user_id=1001, character="Nikola Tesla")
+```
+`clear_history()` is responsible for conversation data lifecycle management, this function offers precise control over history deletion. It supports both bulk removal of all user conversations and targeted deletion of specific character dialogues. The operation returns a detailed status message indicating success or failure, including cases where requested data doesn't exist. The function maintains strict data isolation between users and preserves atomicity of operations, ensuring clean state management.
+
+### 📋 Function Specifications
+`get_ai_response(prompt, model, config, character, user_id, use_history)`
+---
+The primary interface for interacting with the Gemini AI, this function processes user prompts and generates contextual responses while maintaining conversation state. It accepts parameters for model selection, response constraints, and persona customization, returning a structured JSON object containing the AI's response along with metadata including timestamps, response times, and configuration details. The function automatically manages conversation history, keeping track of the last three interactions when context is enabled, and provides comprehensive error handling that maintains consistent output formatting even during failures.
 
 > [!NOTE]
-> (Basically the same, but the output really differs)
+> Returns: JSON string with complete interaction record
 
-## Functions
-1 ) `get_ai_response(prompt, model, config, name)`
----
-> Returns a raw text response from the Gemini AI model.
+> Parameters:
 
-### Parameters:
-- __prompt:__ The input prompt/question
-- __model:__ Gemini model to use (e.g., "gemini-1.5-pro")
-- __config:__ Configuration instructions for the AI
-- __name:__ Persona name the AI should adopt
+| Param | Type | Default | Description |
+|:-----:|:-----|:--------|:------------|
+| `prompt` | str | Required | User's input question |
+| `model` | str | gemini-1.5-flash | Gemini model variant |
+| `config` | str | "Max 100 chars" | Response constraints |
+| `character`	| str | "Albert Einstein" | AI persona |
+| `user_id` | int | 0 | Conversation isolation key |
+| `use_history` | bool | True | Contextual memory toggle |
 
-2 ) `ai_to_json(prompt, model, config, name)`
----
-> Returns a JSON formatted response with metadata.
+> Response structure:
 
-### Parameters:
-- __prompt:__ The input prompt/question
-- __model:__ Gemini model to use (e.g., "gemini-1.5-pro")
-- __config:__ Configuration instructions for the AI
-- __name:__ Persona name the AI should adopt
-
-> [!NOTE]
-> JSON string with structure:
-
-``` json
+```json
 {
-    "name": "Persona name",
-    "response": "AI generated content",
-    "settings": {
-        "prompt": "Original prompt",
-        "model": "Model used",
-        "config": "Configuration used"
-    }
+  "question": "Original prompt",
+  "response": {
+    "character": "Persona name",
+    "answer": "Generated content"
+  },
+  "config": {
+    "model": "gemini-1.5-flash",
+    "max_length": 100,
+    "context_used": true
+  },
+  "metadata": {
+    "timestamp": "ISO-8601",
+    "response_time_ms": 1250,
+    "user_id": 1001
+  }
 }
 ```
 
-### ✅ Example Output
+`get_conversation_history(user_id, character=None)`
+---
+This retrieval function provides access to stored conversation logs, offering both comprehensive user histories and character-specific filtering capabilities. It returns a JSON-formatted structure containing the complete message history along with analytical metadata such as message counts and timestamps. The function verifies existence of requested data and returns appropriate status messages when no history is found, ensuring reliable integration with frontend systems. Output maintains the original message structure including questions, responses, and generation parameters.
 
-``` json
+> [!NOTE]
+> Returns: JSON-formatted conversation log
+
+> Example output:
+
+```json
 {
-    "name": "Albert Einstein",
-    "response": "The weather was irrelevant compared to the cosmic mysteries you discovered.",
-    "settings": {
-        "prompt": "How was the weather when you died?",
-        "model": "gemini-1.5-flash",
-        "config": "Maximum of 100 chars."
-    }
+  "user_id": 1001,
+  "character": "Albert Einstein",
+  "history": [
+    /* Array of message objects */
+  ],
+  "count": 5,
+  "last_updated": "2024-03-15T14:30:00Z"
 }
 ```
 
-### ❌ Error Handling
-
-The functions return error information in JSON format when exceptions occur:
-
-``` json
+### ⚠️ Error Handling
+**Consistent error format across all functions:**
+```json
 {
-    "name": "Persona name",
-    "response": "Error: Error message here",
-    "settings": {
-        "prompt": "Original prompt",
-        "model": "Model used",
-        "config": "Configuration used"
-    }
+  "status": "error",
+  "message": "Detailed error description",
+  "user_id": 1001,
+  "character": "Albert Einstein",
+  "timestamp": "2024-03-15T14:32:00Z"
 }
 ```
 
