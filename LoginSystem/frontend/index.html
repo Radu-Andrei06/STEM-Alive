@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SecureAuth | Login</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <div class="auth-container fade-in">
+            <!-- Login Form -->
+            <div id="login-form">
+                <div class="auth-header">
+                    <h1>Welcome Back</h1>
+                    <p>Sign in to access your account</p>
+                </div>
+                <div class="auth-body">
+                    <div id="login-message" class="message"></div>
+
+                    <div class="form-group">
+                        <label for="login-username">Username</label>
+                        <input type="text" id="login-username" class="form-control" placeholder="Enter your username" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input
+                            type="password"
+                            id="login-password"
+                            class="form-control"
+                            placeholder="Enter your password" />
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('login-password', this)"></i>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="login()">Sign In</button>
+
+                    <button class="btn btn-secondary" onclick="showRegister()">Don't have an account? Register</button>
+                </div>
+                <div class="auth-footer">
+                    <a href="#">Forgot password?</a>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form" style="display: none">
+                <div class="auth-header">
+                    <h1>Create Account</h1>
+                    <p>Get started with your new account</p>
+                </div>
+                <div class="auth-body">
+                    <div id="register-message" class="message"></div>
+
+                    <div class="form-group">
+                        <label for="register-username">Username</label>
+                        <input
+                            type="text"
+                            id="register-username"
+                            class="form-control"
+                            placeholder="Choose a username" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <input type="email" id="register-email" class="form-control" placeholder="Enter your email" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input
+                            type="password"
+                            id="register-password"
+                            class="form-control"
+                            placeholder="Create a password" />
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('register-password', this)"></i>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-confirm-password">Confirm Password</label>
+                        <input
+                            type="password"
+                            id="register-confirm-password"
+                            class="form-control"
+                            placeholder="Confirm your password" />
+                        <i
+                            class="fas fa-eye password-toggle"
+                            onclick="togglePassword('register-confirm-password', this)"></i>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="register()">Register</button>
+
+                    <button class="btn btn-secondary" onclick="showLogin()">Already have an account? Login</button>
+                </div>
+                <div class="auth-footer">By registering, you agree to our <a href="#">Terms of Service</a></div>
+            </div>
+        </div>
+
+        <!-- Login Success Modal -->
+        <div class="modal" id="login-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Registration Successful!</h2>
+                    <button class="close-modal" onclick="hideLoginModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <p>Your account has been created successfully. You can now login with your credentials.</p>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="hideLoginModal()">Continue to Login</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // User database in localStorage
+            const usersDB = JSON.parse(localStorage.getItem("users")) || [];
+
+            function togglePassword(id, icon) {
+                const input = document.getElementById(id);
+                if (input.type === "password") {
+                    input.type = "text";
+                    icon.classList.replace("fa-eye", "fa-eye-slash");
+                } else {
+                    input.type = "password";
+                    icon.classList.replace("fa-eye-slash", "fa-eye");
+                }
+            }
+
+            function showLogin() {
+                document.getElementById("login-form").style.display = "block";
+                document.getElementById("register-form").style.display = "none";
+                clearMessages();
+            }
+
+            function showRegister() {
+                document.getElementById("register-form").style.display = "block";
+                document.getElementById("login-form").style.display = "none";
+                clearMessages();
+            }
+
+            function showLoginModal() {
+                document.getElementById("login-modal").classList.add("active");
+            }
+
+            function hideLoginModal() {
+                document.getElementById("login-modal").classList.remove("active");
+                showLogin();
+            }
+
+            function clearMessages() {
+                document.getElementById("login-message").style.display = "none";
+                document.getElementById("register-message").style.display = "none";
+            }
+
+            function login() {
+                const username = document.getElementById("login-username").value.trim();
+                const password = document.getElementById("login-password").value;
+                const message = document.getElementById("login-message");
+
+                if (!username || !password) {
+                    showError(message, "Please fill in all fields");
+                    return;
+                }
+
+                const user = usersDB.find((u) => u.username === username && u.password === password);
+
+                if (user) {
+                    showSuccess(message, "Login successful!");
+
+                    // Store logged in user
+                    localStorage.setItem(
+                        "currentUser",
+                        JSON.stringify({
+                            username: user.username,
+                            email: user.email,
+                            lastLogin: new Date().toISOString()
+                        })
+                    );
+
+                    // Redirect to dashboard
+                    window.location.href = "dashboard.html";
+                } else {
+                    showError(message, "Invalid username or password");
+                }
+            }
+
+            function register() {
+                const username = document.getElementById("register-username").value.trim();
+                const email = document.getElementById("register-email").value.trim();
+                const password = document.getElementById("register-password").value;
+                const confirmPassword = document.getElementById("register-confirm-password").value;
+                const message = document.getElementById("register-message");
+
+                if (!username || !email || !password || !confirmPassword) {
+                    showError(message, "Please fill in all fields");
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    showError(message, "Passwords do not match");
+                    return;
+                }
+
+                if (password.length < 6) {
+                    showError(message, "Password must be at least 6 characters");
+                    return;
+                }
+
+                if (usersDB.some((u) => u.username === username)) {
+                    showError(message, "Username already taken");
+                    return;
+                }
+
+                if (usersDB.some((u) => u.email === email)) {
+                    showError(message, "Email already registered");
+                    return;
+                }
+
+                // Create new user
+                const newUser = {
+                    username,
+                    email,
+                    password,
+                    createdAt: new Date().toISOString()
+                };
+
+                usersDB.push(newUser);
+                localStorage.setItem("users", JSON.stringify(usersDB));
+
+                // Show success modal instead of message
+                showLoginModal();
+
+                // Clear form
+                document.getElementById("register-username").value = "";
+                document.getElementById("register-email").value = "";
+                document.getElementById("register-password").value = "";
+                document.getElementById("register-confirm-password").value = "";
+            }
+
+            function showError(element, message) {
+                element.textContent = message;
+                element.className = "message error";
+                element.style.display = "block";
+            }
+
+            function showSuccess(element, message) {
+                element.textContent = message;
+                element.className = "message success";
+                element.style.display = "block";
+            }
+
+            // Close modal when clicking outside
+            window.onclick = function (event) {
+                if (event.target.classList.contains("modal")) {
+                    document.querySelectorAll(".modal").forEach((modal) => {
+                        modal.classList.remove("active");
+                    });
+                }
+            };
+        </script>
+    </body>
+</html>
