@@ -20,7 +20,7 @@ def ai_response_decorator(func):
 
     """
 
-    Decorator that transforms the raw AI response into structured JSON output
+    Decorator that transforms the raw AI response into structured dict output
     with metadata and conversation history management.
 
     """
@@ -33,7 +33,7 @@ def ai_response_decorator(func):
             character: str = "Albert Einstein",
             user_id: int = 0,
             use_history: bool = True
-    ) -> str:
+    ) -> dict:
 
         start_time = datetime.now()
 
@@ -72,7 +72,7 @@ def ai_response_decorator(func):
             # Store in conversation history
             conversation_history[user_id][character].append(response_dict)
 
-            return json.dumps(response_dict, ensure_ascii=False, indent=2)
+            return response_dict
 
         except Exception as e:
             error_dict = {
@@ -92,7 +92,7 @@ def ai_response_decorator(func):
                     "user_id": user_id
                 }
             }
-            return json.dumps(error_dict, ensure_ascii=False, indent=2)
+            return error_dict
     return wrapper
 
 
@@ -135,21 +135,17 @@ def get_ai_response(
     except Exception as e:
         raise Exception(f"Failed to get AI response: {str(e)}")
 
-
-import json
-
-
 def clear_conversation_history(
         user_id: int,
         character: str = None
-    ) -> str:
+    ) -> dict:
 
     """
 
-    Clear history for a user/character and return JSON response
+    Clear history for a user/character
 
     Returns:
-        JSON string with status message
+        Dictionary with status message
 
     """
 
@@ -169,20 +165,20 @@ def clear_conversation_history(
     except Exception as e:
         result = {"status": f"Error clearing history: {str(e)}"}
 
-    return json.dumps(result, indent=2)
+    return result
 
 
 def get_conversation_history(
         user_id: int,
         character: str = None
-    ) -> str:
+    ) -> dict:
 
     """
 
-    Get conversation history in JSON format
+    Get conversation history
 
     Returns:
-        JSON string with either:
+        Dictionary with either:
         - Full conversation history
         - Filtered history for specific character
         - Error message if not found
@@ -211,21 +207,23 @@ def get_conversation_history(
     except Exception as e:
         result = {"status": f"Error retrieving history: {str(e)}"}
 
-    return json.dumps(result, ensure_ascii=False, indent=2)
+    return result
 
 
-def clear_history(user_id: int, character: str = None) -> str:
+def clear_history(
+        user_id: int,
+        character: str = None
+    ) -> dict:
 
     """
 
-    Clear conversation history with JSON response
+    Clear conversation history with dict response
 
     Returns:
-        JSON string with operation status
+        Dictionary with operation status
 
     """
 
-    result = {}
     try:
         if user_id not in conversation_history:
             result = {"status": "No history found for this user"}
@@ -259,8 +257,7 @@ def clear_history(user_id: int, character: str = None) -> str:
             "user_id": user_id,
             "character": character if character else None
         }
-
-    return json.dumps(result, ensure_ascii=False, indent=2)
+    return result
 
 # ## Example usage:
 # if __name__ == "__main__":

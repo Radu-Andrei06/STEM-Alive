@@ -9,11 +9,11 @@ def text_to_speech_json(
         text: str,
         model: str = "aura-asteria-en",
         **params
-    ) -> str:
+    ) -> dict:
 
     """
 
-    Returns JSON string with raw audio bytes (Latin1 encoded for efficiency).
+    Returns dictionary with raw audio bytes (Latin1 encoded for efficiency).
     Usage:
         json_output = text_to_speech_json("Hello world")
         print(json_output)  # Ready for API response
@@ -50,10 +50,9 @@ def text_to_speech_json(
         )
         response.raise_for_status()
 
-        # Convert binary audio to JSON-safe string (Latin1 trick)
         result.update({
             "success": True,
-            "audio_bytes": response.content.decode('latin1'),  # Raw bytes as string
+            "audio_bytes": response.content.decode('latin1'),
             "content_type": response.headers.get("Content-Type", "audio/mpeg"),
             "size_bytes": len(response.content)
         })
@@ -63,7 +62,7 @@ def text_to_speech_json(
     except Exception as e:
         result["error"] = f"Processing Error: {str(e)}"
 
-    return json.dumps(result)
+    return result
 
 # ## Example usage
 # if __name__ == "__main__":

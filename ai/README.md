@@ -12,7 +12,7 @@ Maintains contextual dialogues with Gemini AI while tracking metadata and perfor
 
 |          Function           | Description |
 |:---------------------------:|:------------|
-|      `get_ai_response()`      | Decorated function that handles AI interactions with JSON formatting |
+|      `get_ai_response()`      | Decorated function that handles AI interactions |
 | `get_conversation_history()`  | Retrieves conversation logs with message counts |
 |       `clear_history()`       | Manages conversation data lifecycle |
 
@@ -60,10 +60,10 @@ clear_history(user_id=1001, character="Nikola Tesla")
 ### 📋 Function Specifications
 `get_ai_response(prompt, model, config, character, user_id, use_history)`
 ---
-The primary interface for interacting with the Gemini AI, this function processes user prompts and generates contextual responses while maintaining conversation state. It accepts parameters for model selection, response constraints, and persona customization, returning a structured JSON object containing the AI's response along with metadata including timestamps, response times, and configuration details. The function automatically manages conversation history, keeping track of the last three interactions when context is enabled, and provides comprehensive error handling that maintains consistent output formatting even during failures.
+The primary interface for interacting with the Gemini AI, this function processes user prompts and generates contextual responses while maintaining conversation state. It accepts parameters for model selection, response constraints, and persona customization, returning a structured dictionary object containing the AI's response along with metadata including timestamps, response times, and configuration details. The function automatically manages conversation history, keeping track of the last three interactions when context is enabled, and provides comprehensive error handling that maintains consistent output formatting even during failures.
 
 > [!NOTE]
-> Returns: JSON string with complete interaction record
+> Returns: Dictionary with complete interaction record
 
 > Parameters:
 
@@ -103,7 +103,7 @@ The primary interface for interacting with the Gemini AI, this function processe
 This retrieval function provides access to stored conversation logs, offering both comprehensive user histories and character-specific filtering capabilities. It returns a JSON-formatted structure containing the complete message history along with analytical metadata such as message counts and timestamps. The function verifies existence of requested data and returns appropriate status messages when no history is found, ensuring reliable integration with frontend systems. Output maintains the original message structure including questions, responses, and generation parameters.
 
 > [!NOTE]
-> Returns: JSON-formatted conversation log
+> Returns: Dictionary of conversation log
 
 > Example output:
 
