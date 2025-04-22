@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Profile | Student Portal</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap"
+            rel="stylesheet" />
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <a href="dashboard.html" class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>StudentPortal</span>
+            </a>
+
+            <div class="user-menu">
+                <div class="user-avatar" id="user-avatar" onclick="toggleDropdown()"></div>
+
+                <div class="dropdown-menu" id="dropdown-menu">
+                    <a href="profile.html" class="dropdown-item active"> <i class="fas fa-user"></i> Profile </a>
+                    <div class="dropdown-item" onclick="showChangePassword()">
+                        <i class="fas fa-key"></i> Change Password
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" onclick="confirmLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-avatar" id="profile-avatar"></div>
+                <h1 id="profile-name">Student Name</h1>
+                <p class="student-id" id="student-id">ID: Loading...</p>
+                <div class="profile-status">
+                    <span class="status-badge" id="submission-status">Subject selection pending</span>
+                </div>
+            </div>
+
+            <!-- Profile Sections -->
+            <div class="profile-sections">
+                <!-- Personal Information Card -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-user-circle"></i> Personal Information</h2>
+                        <button class="btn btn-outline" onclick="enableEdit('personal-info')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <form id="personal-info-form">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="full-name" class="form-control" disabled />
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Date of Birth</label>
+                                    <input type="date" id="dob" class="form-control" disabled />
+                                </div>
+                                <div class="form-group">
+                                    <label>Gender</label>
+                                    <select id="gender" class="form-control" disabled>
+                                        <option value="">Select</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                        <option value="prefer-not-to-say">Prefer not to say</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="email" class="form-control" disabled />
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="tel" id="phone" class="form-control" disabled />
+                            </div>
+                            <div class="form-actions" id="personal-info-actions" style="display: none">
+                                <button type="button" class="btn btn-outline" onclick="cancelEdit('personal-info')">
+                                    Cancel
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="savePersonalInfo()">
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Academic Information Card -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-graduation-cap"></i> Academic Information</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>Current Grade/Year</label>
+                                <p id="current-grade">11</p>
+                            </div>
+                            <div class="info-item">
+                                <label>Student ID</label>
+                                <p id="display-student-id">STU20230001</p>
+                            </div>
+                            <div class="info-item">
+                                <label>Academic Stream</label>
+                                <p id="academic-stream">Science</p>
+                            </div>
+                            <div class="info-item">
+                                <label>Class Teacher</label>
+                                <p id="class-teacher">Mr. Johnson</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subject Selections Card -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-book-open"></i> Subject Selections</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="subject-selections-container">
+                            <div class="subjects-list">
+                                <h3>Core Subjects</h3>
+                                <ul id="core-subjects">
+                                    <li>Mathematics</li>
+                                    <li>English</li>
+                                    <li>Science</li>
+                                </ul>
+                            </div>
+                            <div class="subjects-list">
+                                <h3>Elective Subjects</h3>
+                                <ul id="elective-subjects">
+                                    <li>No selections made yet</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="submission-details" id="submission-details">
+                            <p><strong>Status:</strong> <span id="submission-status-text">Not submitted</span></p>
+                            <p><strong>Submission Date:</strong> <span id="submission-date">-</span></p>
+                        </div>
+                        <a
+                            href="dashboard.html"
+                            class="btn btn-outline"
+                            style="margin-top: 20px; text-decoration: none">
+                            <i class="fas fa-edit"></i> Update Selections
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change Password Modal -->
+        <div class="modal" id="change-password-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Change Password</h2>
+                    <button class="close-modal" onclick="hideChangePassword()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div id="password-message" class="message"></div>
+
+                <div class="form-group">
+                    <label for="current-password">Current Password</label>
+                    <input
+                        type="password"
+                        id="current-password"
+                        class="form-control"
+                        placeholder="Enter current password" />
+                    <i class="fas fa-eye password-toggle" onclick="togglePassword('current-password', this)"></i>
+                </div>
+
+                <div class="form-group">
+                    <label for="new-password">New Password</label>
+                    <input type="password" id="new-password" class="form-control" placeholder="Enter new password" />
+                    <i class="fas fa-eye password-toggle" onclick="togglePassword('new-password', this)"></i>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm-password">Confirm New Password</label>
+                    <input
+                        type="password"
+                        id="confirm-password"
+                        class="form-control"
+                        placeholder="Confirm new password" />
+                    <i class="fas fa-eye password-toggle" onclick="togglePassword('confirm-password', this)"></i>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-outline" onclick="hideChangePassword()">Cancel</button>
+                    <button class="btn btn-primary" onclick="changePassword()">
+                        <i class="fas fa-key"></i> Update Password
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout Confirmation Modal -->
+        <div class="modal" id="logout-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Confirm Logout</h2>
+                    <button class="close-modal" onclick="cancelLogout()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <p>Are you sure you want to log out of your account?</p>
+                <div class="modal-actions">
+                    <button class="btn btn-outline" onclick="cancelLogout()">Cancel</button>
+                    <button class="btn btn-primary" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Check authentication on page load
+            document.addEventListener("DOMContentLoaded", function () {
+                const user = JSON.parse(localStorage.getItem("currentUser"));
+                if (!user) {
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                // Display user info
+                document.getElementById("profile-name").textContent = user.name || user.username;
+                document.getElementById("user-avatar").textContent = (user.name || user.username)
+                    .charAt(0)
+                    .toUpperCase();
+                document.getElementById("profile-avatar").textContent = (user.name || user.username)
+                    .charAt(0)
+                    .toUpperCase();
+
+                // Generate student ID if not exists
+                if (!user.studentId) {
+                    user.studentId = "STU" + new Date().getFullYear() + Math.floor(1000 + Math.random() * 9000);
+                    localStorage.setItem("currentUser", JSON.stringify(user));
+
+                    // Update in users database
+                    const usersDB = JSON.parse(localStorage.getItem("users")) || [];
+                    const userIndex = usersDB.findIndex((u) => u.username === user.username);
+                    if (userIndex !== -1) {
+                        usersDB[userIndex].studentId = user.studentId;
+                        localStorage.setItem("users", JSON.stringify(usersDB));
+                    }
+                }
+
+                document.getElementById("student-id").textContent = "ID: " + user.studentId;
+                document.getElementById("display-student-id").textContent = user.studentId;
+
+                // Load profile data
+                loadProfileData(user);
+
+                // Load subject selections
+                if (user.subjectSelections && user.subjectSelections.length > 0) {
+                    const electiveList = document.getElementById("elective-subjects");
+                    electiveList.innerHTML = "";
+                    user.subjectSelections.forEach((subject) => {
+                        const li = document.createElement("li");
+                        li.textContent = subject;
+                        electiveList.appendChild(li);
+                    });
+
+                    document.getElementById("submission-status-text").textContent = user.submissionComplete
+                        ? "Submitted"
+                        : "Saved (not submitted)";
+                    document.getElementById("submission-status").textContent = user.submissionComplete
+                        ? "Subjects submitted"
+                        : "Subject selection pending";
+                    document.getElementById("submission-status").className = user.submissionComplete
+                        ? "status-badge success"
+                        : "status-badge warning";
+
+                    if (user.submissionDate) {
+                        const submissionDate = new Date(user.submissionDate);
+                        document.getElementById("submission-date").textContent = submissionDate.toLocaleDateString();
+                    }
+                }
+            });
+
+            function loadProfileData(user) {
+                // Load personal info
+                document.getElementById("full-name").value = user.name || user.username;
+                document.getElementById("email").value = user.email || "";
+                document.getElementById("phone").value = user.phone || "";
+                document.getElementById("dob").value = user.dob || "";
+                document.getElementById("gender").value = user.gender || "";
+
+                // Load academic info
+                document.getElementById("current-grade").textContent = user.grade || "11";
+                document.getElementById("academic-stream").textContent = user.stream || "Science";
+                document.getElementById("class-teacher").textContent = user.teacher || "Mr. Johnson";
+            }
+
+            function enableEdit(section) {
+                const form = document.getElementById(`${section}-form`);
+                const inputs = form.querySelectorAll("input, select");
+                const actions = document.getElementById(`${section}-actions`);
+
+                inputs.forEach((input) => {
+                    input.disabled = false;
+                });
+
+                actions.style.display = "flex";
+            }
+
+            function cancelEdit(section) {
+                const form = document.getElementById(`${section}-form`);
+                const inputs = form.querySelectorAll("input, select");
+                const actions = document.getElementById(`${section}-actions`);
+
+                // Reset to original values
+                const user = JSON.parse(localStorage.getItem("currentUser"));
+                loadProfileData(user);
+
+                inputs.forEach((input) => {
+                    input.disabled = true;
+                });
+
+                actions.style.display = "none";
+            }
+
+            function savePersonalInfo() {
+                const user = JSON.parse(localStorage.getItem("currentUser"));
+                const usersDB = JSON.parse(localStorage.getItem("users")) || [];
+                const userIndex = usersDB.findIndex((u) => u.username === user.username);
+
+                // Update user data
+                user.name = document.getElementById("full-name").value;
+                user.email = document.getElementById("email").value;
+                user.phone = document.getElementById("phone").value;
+                user.dob = document.getElementById("dob").value;
+                user.gender = document.getElementById("gender").value;
+
+                // Update in localStorage
+                localStorage.setItem("currentUser", JSON.stringify(user));
+
+                if (userIndex !== -1) {
+                    usersDB[userIndex] = user;
+                    localStorage.setItem("users", JSON.stringify(usersDB));
+                }
+
+                // Update displayed name
+                document.getElementById("profile-name").textContent = user.name;
+                document.getElementById("user-avatar").textContent = user.name.charAt(0).toUpperCase();
+                document.getElementById("profile-avatar").textContent = user.name.charAt(0).toUpperCase();
+
+                // Disable form
+                cancelEdit("personal-info");
+
+                // Show success message (you could add a toast notification here)
+                alert("Profile updated successfully!");
+            }
+
+            function togglePassword(id, icon) {
+                const input = document.getElementById(id);
+                if (input.type === "password") {
+                    input.type = "text";
+                    icon.classList.replace("fa-eye", "fa-eye-slash");
+                } else {
+                    input.type = "password";
+                    icon.classList.replace("fa-eye-slash", "fa-eye");
+                }
+            }
+
+            function toggleDropdown() {
+                document.getElementById("dropdown-menu").classList.toggle("show");
+            }
+
+            function showChangePassword() {
+                document.getElementById("change-password-modal").classList.add("active");
+                toggleDropdown();
+            }
+
+            function hideChangePassword() {
+                document.getElementById("change-password-modal").classList.remove("active");
+                document.getElementById("password-message").style.display = "none";
+            }
+
+            function changePassword() {
+                const currentPassword = document.getElementById("current-password").value;
+                const newPassword = document.getElementById("new-password").value;
+                const confirmPassword = document.getElementById("confirm-password").value;
+                const message = document.getElementById("password-message");
+
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    showMessage(message, "Please fill in all fields", "error");
+                    return;
+                }
+
+                if (newPassword !== confirmPassword) {
+                    showMessage(message, "New passwords don't match", "error");
+                    return;
+                }
+
+                if (newPassword.length < 6) {
+                    showMessage(message, "Password must be at least 6 characters", "error");
+                    return;
+                }
+
+                const user = JSON.parse(localStorage.getItem("currentUser"));
+                if (!user) {
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                // Verify current password
+                const usersDB = JSON.parse(localStorage.getItem("users")) || [];
+                const userIndex = usersDB.findIndex((u) => u.username === user.username);
+
+                if (userIndex === -1 || usersDB[userIndex].password !== currentPassword) {
+                    showMessage(message, "Current password is incorrect", "error");
+                    return;
+                }
+
+                // Update password
+                usersDB[userIndex].password = newPassword;
+                localStorage.setItem("users", JSON.stringify(usersDB));
+
+                showMessage(message, "Password changed successfully", "success");
+
+                // Clear form
+                document.getElementById("current-password").value = "";
+                document.getElementById("new-password").value = "";
+                document.getElementById("confirm-password").value = "";
+
+                setTimeout(hideChangePassword, 1500);
+            }
+
+            function showMessage(element, text, type) {
+                element.textContent = text;
+                element.className = `message ${type}`;
+                element.style.display = "block";
+            }
+
+            function confirmLogout() {
+                document.getElementById("logout-modal").classList.add("active");
+                toggleDropdown();
+            }
+
+            function cancelLogout() {
+                document.getElementById("logout-modal").classList.remove("active");
+            }
+
+            function logout() {
+                localStorage.removeItem("currentUser");
+                window.location.href = "index.html";
+            }
+
+            // Close dropdown when clicking outside
+            window.onclick = function (event) {
+                if (!event.target.closest(".user-menu")) {
+                    const dropdown = document.getElementById("dropdown-menu");
+                    if (dropdown.classList.contains("show")) {
+                        dropdown.classList.remove("show");
+                    }
+                }
+
+                if (event.target.classList.contains("modal")) {
+                    document.querySelectorAll(".modal").forEach((modal) => {
+                        modal.classList.remove("active");
+                    });
+                }
+            };
+        </script>
+    </body>
+</html>

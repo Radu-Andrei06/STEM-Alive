@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Dashboard | Student Portal</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap"
+            rel="stylesheet" />
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <a href="#" class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>StudentPortal</span>
+            </a>
+
+            <div class="user-menu">
+                <div class="user-avatar" id="user-avatar" onclick="toggleDropdown()"></div>
+
+                <div class="dropdown-menu" id="dropdown-menu">
+                    <a href="profile.html" class="dropdown-item"> <i class="fas fa-user"></i> Profile </a>
+                    <div class="dropdown-item" onclick="showChangePassword()">
+                        <i class="fas fa-key"></i> Change Password
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" onclick="confirmLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <h1>Welcome, <span id="welcome-username"></span>!</h1>
+                <p>
+                    You can now select your subjects for the upcoming academic year. Please review available options and
+                    submit your choices before the deadline.
+                </p>
+            </div>
+
+            <!-- Dashboard Cards -->
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Core Subjects</h3>
+                        <div class="card-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="subject-list">
+                            <div class="subject-item">
+                                <input type="checkbox" id="math" checked disabled />
+                                <label for="math">Mathematics</label>
+                            </div>
+                            <div class="subject-item">
+                                <input type="checkbox" id="english" checked disabled />
+                                <label for="english">English</label>
+                            </div>
+                            <div class="subject-item">
+                                <input type="checkbox" id="science" checked disabled />
+                                <label for="science">Science</label>
+                            </div>
+                        </div>
+                        <p class="note">Core subjects are mandatory for all students</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Elective Subjects</h3>
+                        <div class="card-icon">
+                            <i class="fas fa-atom"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="subject-list">
+                            <div class="subject-item">
+                                <input type="checkbox" id="physics" name="elective" />
+                                <label for="physics">Physics</label>
+                            </div>
+                            <div class="subject-item">
+                                <input type="checkbox" id="chemistry" name="elective" />
+                                <label for="chemistry">Chemistry</label>
+                            </div>
+                            <div class="subject-item">
+                                <input type="checkbox" id="biology" name="elective" />
+                                <label for="biology">Biology</label>
+                            </div>
+                            <div class="subject-item">
+                                <input type="checkbox" id="history" name="elective" />
+                                <label for="history">History</label>
+                            </div>
+                            <div class="subject-item">
+                                <input type="checkbox" id="geography" name="elective" />
+                                <label for="geography">Geography</label>
+                            </div>
+                            <div class="subject-item">
+                                <input type="checkbox" id="economics" name="elective" />
+                                <label for="economics">Economics</label>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" style="margin-top: 15px" onclick="saveSelections()">
+                            <i class="fas fa-save"></i> Save Selections
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">My Selections</h3>
+                        <div class="card-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="selected-subjects">
+                            <p>No subjects selected yet</p>
+                        </div>
+                        <div class="selection-info">
+                            <p><strong>Requirements:</strong> Select 3-5 elective subjects</p>
+                            <p><strong>Deadline:</strong> June 30, 2023</p>
+                        </div>
+                        <button class="btn btn-outline" style="margin-top: 15px" onclick="submitChoices()">
+                            <i class="fas fa-paper-plane"></i> Submit Final Choices
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change Password Modal -->
+        <div class="modal" id="change-password-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Change Password</h2>
+                    <button class="close-modal" onclick="hideChangePassword()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div id="password-message" class="message"></div>
+
+                <div class="form-group">
+                    <label for="current-password">Current Password</label>
+                    <input
+                        type="password"
+                        id="current-password"
+                        class="form-control"
+                        placeholder="Enter current password" />
+                    <i class="fas fa-eye password-toggle" onclick="togglePassword('current-password', this)"></i>
+                </div>
+
+                <div class="form-group">
+                    <label for="new-password">New Password</label>
+                    <input type="password" id="new-password" class="form-control" placeholder="Enter new password" />
+                    <i class="fas fa-eye password-toggle" onclick="togglePassword('new-password', this)"></i>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm-password">Confirm New Password</label>
+                    <input
+                        type="password"
+                        id="confirm-password"
+                        class="form-control"
+                        placeholder="Confirm new password" />
+                    <i class="fas fa-eye password-toggle" onclick="togglePassword('confirm-password', this)"></i>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-outline" onclick="hideChangePassword()">Cancel</button>
+                    <button class="btn btn-primary" onclick="changePassword()">
+                        <i class="fas fa-key"></i> Update Password
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submission Confirmation Modal -->
+        <div class="modal" id="submit-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Confirm Submission</h2>
+                    <button class="close-modal" onclick="cancelSubmission()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <p>
+                    Are you sure you want to submit your subject choices? This action cannot be undone after the
+                    deadline.
+                </p>
+                <div class="modal-actions">
+                    <button class="btn btn-outline" onclick="cancelSubmission()">Cancel</button>
+                    <button class="btn btn-primary" onclick="finalSubmit()">Confirm Submission</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div class="modal" id="success-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Submission Successful</h2>
+                    <button class="close-modal" onclick="closeSuccessModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <p>Your subject choices have been successfully submitted!</p>
+                <p>You can view your selections anytime in your profile.</p>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="closeSuccessModal()">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout Confirmation Modal -->
+        <div class="modal" id="logout-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Confirm Logout</h2>
+                    <button class="close-modal" onclick="cancelLogout()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <p>Are you sure you want to log out of your account?</p>
+                <div class="modal-actions">
+                    <button class="btn btn-outline" onclick="cancelLogout()">Cancel</button>
+                    <button class="btn btn-primary" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Check authentication on page load
+            document.addEventListener("DOMContentLoaded", function () {
+                const user = JSON.parse(localStorage.getItem("currentUser"));
+                if (!user) {
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                // Display user info
+                document.getElementById("welcome-username").textContent = user.username;
+                document.getElementById("user-avatar").textContent = user.username.charAt(0).toUpperCase();
+
+                // Load saved selections if they exist
+                if (user.subjectSelections) {
+                    updateSelectedSubjectsDisplay(user.subjectSelections);
+                    // Check the checkboxes for saved selections
+                    user.subjectSelections.forEach((subject) => {
+                        const checkbox = document.getElementById(subject.toLowerCase());
+                        if (checkbox) {
+                            checkbox.checked = true;
+                        }
+                    });
+                }
+            });
+
+            function togglePassword(id, icon) {
+                const input = document.getElementById(id);
+                if (input.type === "password") {
+                    input.type = "text";
+                    icon.classList.replace("fa-eye", "fa-eye-slash");
+                } else {
+                    input.type = "password";
+                    icon.classList.replace("fa-eye-slash", "fa-eye");
+                }
+            }
+
+            function toggleDropdown() {
+                document.getElementById("dropdown-menu").classList.toggle("show");
+            }
+
+            function showChangePassword() {
+                document.getElementById("change-password-modal").classList.add("active");
+                toggleDropdown();
+            }
+
+            function hideChangePassword() {
+                document.getElementById("change-password-modal").classList.remove("active");
+                document.getElementById("password-message").style.display = "none";
+            }
+
+            function saveSelections() {
+                const checkboxes = document.querySelectorAll('input[name="elective"]:checked');
+                const selectedSubjects = Array.from(checkboxes).map((cb) => {
+                    return document.querySelector(`label[for="${cb.id}"]`).textContent;
+                });
+
+                if (selectedSubjects.length < 3 || selectedSubjects.length > 5) {
+                    alert("Please select between 3 to 5 elective subjects");
+                    return;
+                }
+
+                // Save to user's profile
+                const user = JSON.parse(localStorage.getItem("currentUser"));
+                const usersDB = JSON.parse(localStorage.getItem("users")) || [];
+                const userIndex = usersDB.findIndex((u) => u.username === user.username);
+
+                if (userIndex !== -1) {
+                    usersDB[userIndex].subjectSelections = selectedSubjects;
+                    localStorage.setItem("users", JSON.stringify(usersDB));
+
+                    // Update current user in session
+                    user.subjectSelections = selectedSubjects;
+                    localStorage.setItem("currentUser", JSON.stringify(user));
+                }
+
+                updateSelectedSubjectsDisplay(selectedSubjects);
+                alert("Your selections have been saved successfully!");
+            }
+
+            function updateSelectedSubjectsDisplay(subjects) {
+                const container = document.getElementById("selected-subjects");
+
+                if (!subjects || subjects.length === 0) {
+                    container.innerHTML = "<p>No subjects selected yet</p>";
+                    return;
+                }
+
+                let html = "<ul class='selected-subjects-list'>";
+                // Add core subjects
+                html += "<li>Mathematics</li>";
+                html += "<li>English</li>";
+                html += "<li>Science</li>";
+
+                // Add elective subjects
+                subjects.forEach((subject) => {
+                    html += `<li>${subject}</li>`;
+                });
+
+                html += "</ul>";
+                container.innerHTML = html;
+            }
+
+            function submitChoices() {
+                const user = JSON.parse(localStorage.getItem("currentUser"));
+                if (!user.subjectSelections || user.subjectSelections.length === 0) {
+                    alert("Please save your selections before submitting");
+                    return;
+                }
+                document.getElementById("submit-modal").classList.add("active");
+            }
+
+            function cancelSubmission() {
+                document.getElementById("submit-modal").classList.remove("active");
+            }
+
+            function finalSubmit() {
+                // In a real app, this would send data to the server
+                document.getElementById("submit-modal").classList.remove("active");
+                document.getElementById("success-modal").classList.add("active");
+
+                // Mark submission as complete in user data
+                const user = JSON.parse(localStorage.getItem("currentUser"));
+                const usersDB = JSON.parse(localStorage.getItem("users")) || [];
+                const userIndex = usersDB.findIndex((u) => u.username === user.username);
+
+                if (userIndex !== -1) {
+                    usersDB[userIndex].submissionComplete = true;
+                    usersDB[userIndex].submissionDate = new Date().toISOString();
+                    localStorage.setItem("users", JSON.stringify(usersDB));
+
+                    // Update current user in session
+                    user.submissionComplete = true;
+                    user.submissionDate = new Date().toISOString();
+                    localStorage.setItem("currentUser", JSON.stringify(user));
+                }
+            }
+
+            function closeSuccessModal() {
+                document.getElementById("success-modal").classList.remove("active");
+            }
+
+            function changePassword() {
+                const currentPassword = document.getElementById("current-password").value;
+                const newPassword = document.getElementById("new-password").value;
+                const confirmPassword = document.getElementById("confirm-password").value;
+                const message = document.getElementById("password-message");
+
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    showMessage(message, "Please fill in all fields", "error");
+                    return;
+                }
+
+                if (newPassword !== confirmPassword) {
+                    showMessage(message, "New passwords don't match", "error");
+                    return;
+                }
+
+                if (newPassword.length < 6) {
+                    showMessage(message, "Password must be at least 6 characters", "error");
+                    return;
+                }
+
+                const user = JSON.parse(localStorage.getItem("currentUser"));
+                if (!user) {
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                // Verify current password
+                const usersDB = JSON.parse(localStorage.getItem("users")) || [];
+                const userIndex = usersDB.findIndex((u) => u.username === user.username);
+
+                if (userIndex === -1 || usersDB[userIndex].password !== currentPassword) {
+                    showMessage(message, "Current password is incorrect", "error");
+                    return;
+                }
+
+                // Update password
+                usersDB[userIndex].password = newPassword;
+                localStorage.setItem("users", JSON.stringify(usersDB));
+
+                showMessage(message, "Password changed successfully", "success");
+
+                // Clear form
+                document.getElementById("current-password").value = "";
+                document.getElementById("new-password").value = "";
+                document.getElementById("confirm-password").value = "";
+
+                setTimeout(hideChangePassword, 1500);
+            }
+
+            function showMessage(element, text, type) {
+                element.textContent = text;
+                element.className = `message ${type}`;
+                element.style.display = "block";
+            }
+
+            function confirmLogout() {
+                document.getElementById("logout-modal").classList.add("active");
+                toggleDropdown();
+            }
+
+            function cancelLogout() {
+                document.getElementById("logout-modal").classList.remove("active");
+            }
+
+            function logout() {
+                localStorage.removeItem("currentUser");
+                window.location.href = "index.html";
+            }
+
+            // Close dropdown when clicking outside
+            window.onclick = function (event) {
+                if (!event.target.closest(".user-menu")) {
+                    const dropdown = document.getElementById("dropdown-menu");
+                    if (dropdown.classList.contains("show")) {
+                        dropdown.classList.remove("show");
+                    }
+                }
+
+                if (event.target.classList.contains("modal")) {
+                    document.querySelectorAll(".modal").forEach((modal) => {
+                        modal.classList.remove("active");
+                    });
+                }
+            };
+        </script>
+    </body>
+</html>

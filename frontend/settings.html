@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Account Settings | SecureAuth</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <a href="dashboard.html" class="logo">
+                <i class="fas fa-lock"></i>
+                <span>SecureAuth</span>
+            </a>
+
+            <div class="user-menu">
+                <div class="user-avatar" id="user-avatar" onclick="toggleDropdown()"></div>
+
+                <div class="dropdown-menu" id="dropdown-menu">
+                    <div class="dropdown-item" onclick="window.location.href='settings.html'">
+                        <i class="fas fa-cog"></i> Settings
+                    </div>
+                    <div class="dropdown-item" onclick="window.location.href='dashboard.html#change-password'">
+                        <i class="fas fa-key"></i> Change Password
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" onclick="confirmLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="settings-container">
+                <h1 class="settings-title">Account Settings</h1>
+
+                <div class="settings-card">
+                    <h2><i class="fas fa-user"></i> Profile Information</h2>
+                    <div class="form-group">
+                        <label for="settings-username">Username</label>
+                        <input type="text" id="settings-username" class="form-control" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="settings-email">Email Address</label>
+                        <input type="email" id="settings-email" class="form-control" />
+                    </div>
+                    <button class="btn btn-primary" onclick="updateSettings()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+
+                <div class="settings-card">
+                    <h2><i class="fas fa-shield-alt"></i> Security Settings</h2>
+                    <div class="security-option">
+                        <div>
+                            <h3>Two-Factor Authentication</h3>
+                            <p>Add an extra layer of security to your account</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="2fa-toggle" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <a
+                        href="dashboard.html#change-password"
+                        class="btn btn-outline"
+                        style="margin-top: 15px; display: inline-flex; align-items: center; gap: 8px">
+                        <i class="fas fa-key"></i> Change Password
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout Confirmation Modal -->
+        <div class="modal" id="logout-modal">
+            <div class="modal-content">
+                <h2>Confirm Logout</h2>
+                <p>Are you sure you want to log out of your account?</p>
+                <div class="modal-actions">
+                    <button class="btn btn-outline" onclick="cancelLogout()">Cancel</button>
+                    <button class="btn btn-primary" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Check authentication on page load
+            document.addEventListener("DOMContentLoaded", function () {
+                const user = JSON.parse(localStorage.getItem("currentUser"));
+                if (!user) {
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                // Display user info
+                document.getElementById("user-avatar").textContent = user.username.charAt(0).toUpperCase();
+                document.getElementById("settings-username").value = user.username;
+                document.getElementById("settings-email").value = user.email || "";
+            });
+
+            function toggleDropdown() {
+                document.getElementById("dropdown-menu").classList.toggle("show");
+            }
+
+            function updateSettings() {
+                const email = document.getElementById("settings-email").value.trim();
+
+                if (!email) {
+                    alert("Email cannot be empty");
+                    return;
+                }
+
+                // Update user in localStorage
+                const user = JSON.parse(localStorage.getItem("currentUser"));
+                if (user) {
+                    user.email = email;
+                    localStorage.setItem("currentUser", JSON.stringify(user));
+
+                    // Update in usersDB
+                    const usersDB = JSON.parse(localStorage.getItem("users")) || [];
+                    const userIndex = usersDB.findIndex((u) => u.username === user.username);
+                    if (userIndex !== -1) {
+                        usersDB[userIndex].email = email;
+                        localStorage.setItem("users", JSON.stringify(usersDB));
+                    }
+
+                    alert("Settings updated successfully");
+                }
+            }
+
+            function confirmLogout() {
+                document.getElementById("logout-modal").style.display = "flex";
+                toggleDropdown();
+            }
+
+            function cancelLogout() {
+                document.getElementById("logout-modal").style.display = "none";
+            }
+
+            function logout() {
+                localStorage.removeItem("currentUser");
+                window.location.href = "index.html";
+            }
+
+            // Close dropdown when clicking outside
+            window.onclick = function (event) {
+                if (!event.target.closest(".user-menu")) {
+                    const dropdown = document.getElementById("dropdown-menu");
+                    if (dropdown.classList.contains("show")) {
+                        dropdown.classList.remove("show");
+                    }
+                }
+
+                if (event.target.classList.contains("modal")) {
+                    cancelLogout();
+                }
+            };
+        </script>
+    </body>
+</html>
