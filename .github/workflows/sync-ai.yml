@@ -1,0 +1,36 @@
+name: Sync AI Folder to Repository with API
+
+on:
+  push:
+    paths:
+      - 'ai/**'
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout STEM-Alive
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Clone stem-alive
+        run: |
+          git clone https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/DenysHerasymchuk/stem-alive.git target-repo
+
+      - name: Copy AI Folder
+        run: |
+          rm -rf target-repo/ai
+          cp -r ai target-repo/ai
+
+      - name: Commit and Push
+        run: |
+          cd target-repo
+          git add ai
+          git commit -m "Sync ai folder from RepoA [skip ci]" || echo "No changes to commit"
+          git push

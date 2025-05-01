@@ -1,7 +1,7 @@
 from base64 import b64decode
 from pathlib import Path
 import requests
-import sys
+
 from os import getenv
 from dotenv import load_dotenv
 
@@ -20,7 +20,9 @@ def generate_image(
         seed: int = None,
         endpoint: str = "https://api.imagepig.com/"
     ) -> dict:
+
     """
+
     Generate a single image using the ImagePig API.
 
     Args:
@@ -33,7 +35,9 @@ def generate_image(
 
     Returns:
         dict: Complete response from API including metadata
+
     """
+
     # Set default output path if not provided
     if output_path is None:
         output_path = Path("../outputs") / f"generated_image.{image_format.lower()}"
