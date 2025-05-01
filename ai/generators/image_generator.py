@@ -5,12 +5,14 @@ import requests
 from os import getenv
 from dotenv import load_dotenv
 
+
 # Load environment variables
 load_dotenv()
 
 API_KEY = getenv("IMAGEPIG_API_KEY")
 if not API_KEY:
     raise ValueError("IMAGEPIG_API_KEY not found in environment variables")
+
 
 def generate_image(
         prompt: str,

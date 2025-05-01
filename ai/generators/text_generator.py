@@ -5,6 +5,7 @@ from google import genai
 from collections import defaultdict
 from functools import wraps
 
+
 # Load environment variables
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -15,6 +16,7 @@ client = genai.Client(api_key=GEMINI_API_KEY)
 # In-memory conversation history storage
 # Structure: {user_id: {character: [messages]}}
 conversation_history = defaultdict(lambda: defaultdict(list))
+
 
 def ai_response_decorator(func):
 
