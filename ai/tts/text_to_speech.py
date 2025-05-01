@@ -2,7 +2,9 @@ import os
 import requests
 from dotenv import load_dotenv
 
+
 load_dotenv()
+
 
 def text_to_speech_json(
         text: str,
