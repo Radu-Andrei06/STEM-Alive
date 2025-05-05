@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from google import genai
 from collections import defaultdict
 from functools import wraps
-
+import json
 
 # Load environment variables
 load_dotenv()
@@ -261,50 +261,50 @@ def clear_history(
         }
     return result
 
-# ## Example usage:
-# if __name__ == "__main__":
-#     # First interaction (user 1001)
-#     print("First question to Einstein:")
-#     print(get_ai_response(
-#         prompt="What's your view on quantum mechanics?",
-#         character="Albert Einstein",
-#         user_id=1001
-#     ))
-#
-#     # Follow-up with context (user 1001)
-#     print("\nFollow-up question:")
-#     print(get_ai_response(
-#         prompt="Can you explain that further?",
-#         character="Albert Einstein",
-#         user_id=1001
-#     ))
-#
-#     # Different character conversation (user 1001)
-#     print("\nQuestion to Tesla:")
-#     print(get_ai_response(
-#         prompt="Tell me about your wireless electricity ideas",
-#         character="Nikola Tesla",
-#         user_id=1001
-#     ))
-#
-#     # Different user conversation (user 2002)
-#     print("\nDifferent user's question:")
-#     print(get_ai_response(
-#         prompt="Explain E=mc² simply",
-#         character="Albert Einstein",
-#         user_id=2002
-#     ))
-#
-#     # Inspect history examples:
-#     print("\nUser 1001's Einstein History:")
-#     print(json.dumps(get_conversation_history(1001, "Albert Einstein"), indent=2))
-#
-#     print("\nFull User 1001 History:")
-#     print(json.dumps(get_conversation_history(1001), indent=2))
-#
-#     # Clearing examples:
-#     print("\nClearing Einstein history for user 1001:")
-#     print(clear_history(1001, "Albert Einstein"))
-#
-#     print("\nClearing all history for user 1001:")
-#     print(clear_history(1001))
+## Example usage:
+if __name__ == "__main__":
+    # First interaction (user 1001)
+    print("First question to Einstein:")
+    print(get_ai_response(
+        prompt="What's your view on quantum mechanics?",
+        character="Albert Einstein",
+        user_id=1001
+    ))
+
+    # Follow-up with context (user 1001)
+    print("\nFollow-up question:")
+    print(get_ai_response(
+        prompt="Can you explain that further?",
+        character="Albert Einstein",
+        user_id=1001
+    ))
+
+    # Different character conversation (user 1001)
+    print("\nQuestion to Tesla:")
+    print(get_ai_response(
+        prompt="Tell me about your wireless electricity ideas",
+        character="Nikola Tesla",
+        user_id=1001
+    ))
+
+    # Different user conversation (user 2002)
+    print("\nDifferent user's question:")
+    print(get_ai_response(
+        prompt="Explain E=mc² simply",
+        character="Albert Einstein",
+        user_id=2002
+    ))
+
+    # Inspect history examples:
+    print("\nUser 1001's Einstein History:")
+    print(json.dumps(get_conversation_history(1001, "Albert Einstein"), indent=2))
+
+    print("\nFull User 1001 History:")
+    print(json.dumps(get_conversation_history(1001), indent=2))
+
+    # Clearing examples:
+    print("\nClearing Einstein history for user 1001:")
+    print(clear_history(1001, "Albert Einstein"))
+
+    print("\nClearing all history for user 1001:")
+    print(clear_history(1001))
